@@ -1,0 +1,66 @@
+clean_rows_name <- function(char){
+  partial_clean_names <- function(.data, unique = FALSE) {
+    n <- if (is.data.frame(.data)) colnames(.data) else .data
+    
+    n <- gsub("%+", "_pct_", n)
+    n <- gsub("\\$+", "_dollars_", n)
+    n <- gsub("\\++", "_plus_", n)
+    n <- gsub("-+", "_minus_", n)
+    n <- gsub("\\*+", "_star_", n)
+    n <- gsub("#+", "_cnt_", n)
+    n <- gsub("&+", "_and_", n)
+    n <- gsub("@+", "_at_", n)
+    
+    n <- gsub("[^a-zA-Z0-9_]+", "_", n)
+    n <- gsub("([A-Z][a-z])", "_\\1", n)
+    n <- tolower(trimws(n))
+    
+    n <- gsub("(^_+|_+$)", "", n)
+    
+    n <- gsub("_+", "_", n)
+    
+    if (unique) n <- make.unique(n, sep = "_")
+    
+    if (is.data.frame(.data)) {
+      colnames(.data) <- n
+      .data
+    } else {
+      n
+    }
+  }
+  
+  char %>% 
+    partial_clean_names() %>% 
+    str_replace_all('_', ' ') %>% 
+    toTitleCase() %>% 
+    str_replace_all(' i ', ' I ') %>% 
+    StrCap() %>% 
+    return()
+}
+
+
+# Package
+pacman::p_load(here, data.table, magrittr, tidyverse, janitor,
+               ggplot2, ggthemes, tools,  DescTools)
+
+
+# Read
+spotify_data <- 
+  fread(here('data.csv'))
+
+
+# Clean
+spoti_clean <- 
+  spotify_data %>% 
+  filter(Region == 'global') %>% 
+  clean_names() %>% 
+  mutate(
+    date = as.Date(date, '%Y-%m-%d'),
+    year = year(date),
+    month = month(date),
+    track_name = clean_rows_name(track_name),
+    artist = clean_rows_name(artist),
+    track_name = ifelse(str_detect(track_name, 'Despacito') == T, 'Despacito', track_name)
+    ) %>%
+  filter(track_name != '' & artist != '')      # Rows without a name/artist
+
