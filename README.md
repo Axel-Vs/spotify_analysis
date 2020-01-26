@@ -1,2 +1,2 @@
 # Spotify_data
-TUM: Spotify Analysis Data
+TUM project: Spotify Analysis Data
