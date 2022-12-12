@@ -1,2 +1,1 @@
-# Spotify_data
-TUM project: Spotify Analysis Data
+# Spotify Data Visualization Analysis
