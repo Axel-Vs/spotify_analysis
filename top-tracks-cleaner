@@ -1,3 +1,13 @@
+# Spotify Data Cleaning Script
+# This script loads and processes Spotify data, cleaning column and row names for better clarity.
+# Key tasks:
+# - Name cleaning: Replaces special characters in strings with descriptive terms (e.g., '%' becomes '_pct_').
+# - Data transformation: Extracts year, month from dates and applies title casing to track names and artists.
+# - Data filtering: Targets global region, removes tracks with empty names/artists.
+#
+# Dependencies: here, data.table, magrittr, tidyverse, janitor, ggplot2, ggthemes, tools, DescTools.
+
+
 clean_rows_name <- function(char){
   partial_clean_names <- function(.data, unique = FALSE) {
     n <- if (is.data.frame(.data)) colnames(.data) else .data
